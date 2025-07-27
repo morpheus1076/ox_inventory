@@ -443,6 +443,13 @@ Item('blaettchen', function(event, item, inventory, slot, data)
    end
 end)
 
+Item('beutel1_pack', function(event, item, inventory, slot, data)
+   if event == 'usingItem' then
+	  exports.ox_inventory:AddItem(source, 'garbage', 1, {image = 'trash_paper'})
+	  exports.ox_inventory:AddItem(source, 'beutel1', 50)
+   end
+end)
+
 Item('bag', function(event, item, inventory, slot, data)
    if event == 'usingItem' then
 	  exports.ox_inventory:AddItem(source, 'nobag', 1)

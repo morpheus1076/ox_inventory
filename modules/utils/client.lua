@@ -139,6 +139,7 @@ function Utils.CreateBlip(settings, coords)
     SetBlipScale(blip, settings.scale)
     SetBlipColour(blip, settings.colour)
     SetBlipAsShortRange(blip, true)
+    SetBlipHiddenOnLegend(blip, true)
     BeginTextCommandSetBlipName(settings.name)
     EndTextCommandSetBlipName(blip)
 

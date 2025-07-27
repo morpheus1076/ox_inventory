@@ -378,10 +378,11 @@ lib.callback.register('ox_inventory:usingItem', function(data, noAnim)
 			item.disable.combat = true
 		end
 
-		local success = (not item.usetime or noAnim or lib.progressBar({
+		local success = (not item.usetime or noAnim or lib.progressCircle({
 			duration = item.usetime,
 			label = item.label or locale('using', data.metadata.label or data.label),
 			useWhileDead = item.useWhileDead,
+			position = 'bottom',
 			canCancel = item.cancel,
 			disable = item.disable,
 			anim = item.anim or item.scenario,
@@ -1774,6 +1775,7 @@ lib.callback.register('ox_inventory:startCrafting', function(id, recipe)
 	return lib.progressCircle({
 		label = locale('crafting_item', recipe.metadata?.label or Items[recipe.name].label),
 		duration = recipe.duration or 3000,
+		position = 'bottom',
 		canCancel = true,
 		disable = {
 			move = true,
