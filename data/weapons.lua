@@ -250,6 +250,11 @@ return {
 			ammoname = 'ammo-flare'
 		},
 
+		['WEAPON_HACKINGDEVICE'] = {
+			label = 'Hacking Device',
+			weight = 125,
+		},
+
 		['WEAPON_FLASHLIGHT'] = {
 			label = 'Flashlight',
 			weight = 125,

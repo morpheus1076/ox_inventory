@@ -36,7 +36,42 @@ return {
 		weight = 500000,
 		groups = {['police'] = 3}
 	},
-
+	{
+		coords = 	vec3(-345.243256, -127.910149, 38.962296),
+		target = {
+			loc = 	vec3(-345.243256, -127.910149, 38.962296),
+			length = 0.4,
+			width = 1.0,
+			heading = 0,
+			minZ = 37.69,
+			maxZ = 39.69,
+			label = 'Schlüsselkasten'
+		},
+		name = 'lscschluesselkasten',
+		label = 'Schlüsselkasten LSC',
+		owner = false,
+		slots = 50,
+		weight = 1000,
+		groups = {['lsc'] = 1}
+	},
+	{
+		coords = 	vec3(931.464172, -1472.430420, 29.642624),
+		target = {
+			loc = 	vec3(931.464172, -1472.430420, 29.642624),
+			length = 0.4,
+			width = 1.0,
+			heading = 0,
+			minZ = 27.69,
+			maxZ = 30.69,
+			label = 'Schlüsselkasten'
+		},
+		name = 'gwaschluesselkasten',
+		label = 'Schlüsselkasten GWA',
+		owner = false,
+		slots = 50,
+		weight = 1000,
+		groups = {['gwa'] = 1}
+	},
 	{
 		coords = vec3(452.38,-980.11,30.69),
 		target = {

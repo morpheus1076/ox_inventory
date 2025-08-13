@@ -8,6 +8,7 @@ return {
 		['schachtel'] = { dict = 'issheistfbisetup1', clip = 'hassle_intro_loop_f' },
 		['kokain'] = { dict = 'move_p_m_two_idles@generic', clip = 'fidget_sniff_fingers'},
 		['labor01'] = { dict = 'anim@scripted@player@freemode', clip = 'ig4_chem_pour@heeled'},
+		['tablet'] = { dict = 'amb@world_human_seat_wall_tablet@female@base', clip = 'base'},
 	},
 	prop = {
 		['burger'] = { model = 'prop_cs_burger_01', pos = vec3(0.02, 0.02, -0.02), rot = vec3(0.0, 0.0, 0.0) },

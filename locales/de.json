@@ -87,7 +87,7 @@
   "dumpster": "Mülleimer",
   "crafting_item": "%s herstellen",
   "crafting_bench": "Werkbank",
-  "open_crafting_bench": "Werkbank öffnen",
+  "open_crafting_bench": "Verarbeiten",
   "not_enough_durability": "Haltbarkeit von %s reicht nicht mehr aus",
   "storage": "Kofferraum"
 }

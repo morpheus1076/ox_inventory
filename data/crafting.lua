@@ -282,7 +282,7 @@ return {
 		--blip = { id = 467, colour = 1, scale = 0.5, hidden = true },
 	},
 	{	--ID:10 DEBUG
-        name = 'debug_crafting',
+        name = 'kleines_crafting',
 		items = {
 			{
 				name = 'gewuerz',
@@ -290,23 +290,23 @@ return {
 					zwiebel = 4
 				},
 				duration = 8000,
-				count = 2,
+				count = {4,6},
 			},
 			{
 				name = 'saft',
 				ingredients = {
-					orange = 2
+					orange = 8
 				},
 				duration = 8000,
-				count = {1,2},
+				count = {3,6},
 			},
 			{
 				name = 'sauce',
 				ingredients = {
-					tomate = 4
+					tomate = 10
 				},
 				duration = 8000,
-				count = {1,2},
+				count = {2,4},
 			},
 			{
 				name = 'salatgeschnitten',
@@ -314,16 +314,16 @@ return {
 					salat = 3
 				},
 				duration = 8000,
-				count = {3,4},
+				count = {6,7},
 			},
 		},
 		points = {
-			vec3(2516.596, 4215.706, 39.933)
+			vec3(356.832, 3399.602, 36.404)
 		},
 		zones = {
 			{
-				coords = vec3(2516.596, 4215.706, 39.933),
-				size = vec3(1.5, 1.5, 1.5),
+				coords = vec3(356.832, 3399.602, 36.404),
+				size = vec3(2, 2, 2),
 				distance = 3.0,
 				rotation = 0.0,
 			},

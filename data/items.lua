@@ -36,6 +36,20 @@ return {
 		description = nil
 	},
 
+	['tops'] = {
+		label = 'Oberbekleidung',
+		weight = 500,
+		stack = false,
+		close = true,
+		description = 'Oberbekleidung Variation',
+		client = {
+			anim = { dict = 'missheistdockssetup1clipboard@idle_a', clip = 'idle_a', flag = 49 },
+			prop = { model = 'prop_rolled_sock_02', pos = vec3(-0.14, -0.14, -0.08), rot = vec3(-50.0, -50.0, 0.0) },
+			disable = { move = true, car = true, combat = true },
+			usetime = 3500,
+		}
+	},
+
 	['shoes'] = {
 		label = 'Schuhe',
 		weight = 500,
@@ -968,14 +982,14 @@ return {
 
 	['getreide'] = {
 		label = 'Getreide',
-		weight = 300,
+		weight = 50,
 		stack = true,
 		close = true,
 		description = nil
 	},
 	['salat'] = {
 		label = 'Salat',
-		weight = 300,
+		weight = 170,
 		stack = true,
 		close = true,
 		description = nil
