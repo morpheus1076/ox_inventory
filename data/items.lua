@@ -980,6 +980,13 @@ return {
 	},
 --- Farming & Crafting---
 
+	['fish'] = {
+		label = 'Fisch',
+		weight = 180,
+		stack = true,
+		close = true,
+		description = nil
+	},
 	['getreide'] = {
 		label = 'Getreide',
 		weight = 50,
@@ -1564,5 +1571,12 @@ return {
 		stack = true,
 		close = true,
 		description = nil
+	},
+	['fernseher'] = {
+		label = 'Fernseher',
+		weight = 15000,
+		stack = false,
+		close = false,
+		description = 'illegales Diebesgut'
 	},
 }
