@@ -142,6 +142,8 @@ return {
 			{ name = 'ammo-9', price = 5, },
 			{ name = 'WEAPON_KNIFE', price = 200 },
 			{ name = 'WEAPON_BAT', price = 100 },
+			{ name = 'WEAPON_KNUCKLE', price = 70 },
+			{ name = 'WEAPON_SWITHBLADE', price = 280 },
 			{ name = 'kevlars', price = 1000 },
 			{ name = 'kevlarm', price = 1500 },
 			{ name = 'kevlar', price = 2100 },
