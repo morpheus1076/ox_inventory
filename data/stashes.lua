@@ -412,6 +412,18 @@ return {
 		slots = 35,
 		weight = 480000,
 	},
+	{
+		name = 'lager11',
+		label = 'Lager 11',
+		slots = 40,
+		weight = 600000,
+	},
+	{
+		name = 'lager12',
+		label = 'Lager 12',
+		slots = 20,
+		weight = 330000,
+	},
 
 	--[[{
 		coords = vec3(62.5555, -1004.9807, 28.3574),

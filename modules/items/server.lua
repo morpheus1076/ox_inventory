@@ -126,7 +126,7 @@ CreateThread(function()
 		count += 1
 	end
 
-	shared.info(('Inventory has loaded %d items'):format(count))
+	shared.info(('^4Inventory has loaded %d items'):format(count))
 	collectgarbage('collect') -- clean up from initialisation
 	shared.ready = true
 end)
