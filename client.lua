@@ -79,9 +79,9 @@ end
 
 local defaultInventory = {
 	type = 'newdrop',
-	slots = shared.dropslots,
+	slots = shared.playerslots,
 	weight = 0,
-	maxWeight = shared.dropweight,
+	maxWeight = shared.playerweight,
 	items = {}
 }
 
@@ -162,23 +162,23 @@ function client.openInventory(inv, data)
     local left, right, accessError
 
     if inv == 'player' and data ~= cache.serverId then
-        local targetId, targetPed, serverId
+        local targetId, targetPed
 
         if not data then
             targetId, targetPed = Utils.GetClosestPlayer()
-            serverId = targetId and GetPlayerServerId(targetId)
-            data = serverId
+            data = targetId and GetPlayerServerId(targetId)
         else
-            serverId = type(data) == 'table' and data.id or data
+            local serverId = type(data) == 'table' and data.id or data
+
+            if serverId == cache.serverId then return end
+
             targetId = serverId and GetPlayerFromServerId(serverId)
             targetPed = targetId and GetPlayerPed(targetId)
         end
 
-        if serverId == cache.serverId then return end
-
         local targetCoords = targetPed and GetEntityCoords(targetPed)
 
-        if not targetCoords or #(targetCoords - GetEntityCoords(playerPed)) > 1.8 or (not client.hasGroup(shared.police) and not Player(serverId).state.canSteal) then
+        if not targetCoords or #(targetCoords - GetEntityCoords(playerPed)) > 1.8 or not (client.hasGroup(shared.police) or canOpenTarget(targetPed)) then
             return lib.notify({ id = 'inventory_right_access', type = 'error', description = locale('inventory_right_access') })
         end
     end
@@ -269,7 +269,7 @@ function client.openInventory(inv, data)
     SetNuiFocusKeepInput(true)
     closeTrunk()
 
-    if client.screenblur then Utils.blurIn() end
+    if client.screenblur then TriggerScreenblurFadeIn(0) end
 
     currentInventory = right or defaultInventory
     left.items = PlayerData.inventory
@@ -326,7 +326,7 @@ RegisterNetEvent('ox_inventory:forceOpenInventory', function(left, right)
 	SetNuiFocusKeepInput(true)
 	closeTrunk()
 
-	if client.screenblur then Utils.blurIn() end
+	if client.screenblur then TriggerScreenblurFadeIn(0) end
 
 	currentInventory = right or defaultInventory
 	currentInventory.ignoreSecurityChecks = true
@@ -378,11 +378,10 @@ lib.callback.register('ox_inventory:usingItem', function(data, noAnim)
 			item.disable.combat = true
 		end
 
-		local success = (not item.usetime or noAnim or lib.progressCircle({
+		local success = (not item.usetime or noAnim or lib.progressBar({
 			duration = item.usetime,
 			label = item.label or locale('using', data.metadata.label or data.label),
 			useWhileDead = item.useWhileDead,
-			position = 'bottom',
 			canCancel = item.cancel,
 			disable = item.disable,
 			anim = item.anim or item.scenario,
@@ -738,14 +737,10 @@ local invHotkeys = false
 
 ---@type function?
 local function registerCommands()
-	if client.enablestealcommand then
-		RegisterCommand('steal', openNearbyInventory, false)
-	end
+	RegisterCommand('steal', openNearbyInventory, false)
 
 	local function openGlovebox(vehicle)
 		if not IsPedInAnyVehicle(playerPed, false) or not NetworkGetEntityIsNetworked(vehicle) then return end
-
-		if IsEntityDead(vehicle) then return end
 
 		local vehicleHash = GetEntityModel(vehicle)
 		local vehicleClass = GetVehicleClass(vehicle)
@@ -820,7 +815,7 @@ local function registerCommands()
 			if not shared.target and entityType == 3 then
 				local model = GetEntityModel(entity)
 
-				if Inventory.Dumpsters:includes(model) then
+				if Inventory.Dumpsters[model] then
 					return Inventory.OpenDumpster(entity)
 				end
 			end
@@ -857,7 +852,7 @@ local function registerCommands()
 		description = locale('disable_hotbar'),
 		defaultKey = client.keys[3],
 		onPressed = function()
-			if EnableWeaponWheel or not invHotkeys or IsNuiFocused() or lib.progressActive() then return end
+			if EnableWeaponWheel or IsNuiFocused() or lib.progressActive() then return end
 			SendNUIMessage({ action = 'toggleHotbar' })
 		end
 	})
@@ -886,7 +881,7 @@ function client.closeInventory(server)
 		invOpen = nil
 		SetNuiFocus(false, false)
 		SetNuiFocusKeepInput(false)
-		Utils.blurOut()
+		TriggerScreenblurFadeOut(0)
 		closeTrunk()
 		SendNUIMessage({ action = 'closeInventory' })
 		SetInterval(client.interval, 200)
@@ -1024,10 +1019,9 @@ end)
 ---@param point CPoint
 local function nearbyDrop(point)
 	if not point.instance or point.instance == currentInstance then
-        DrawMarker(client.dropmarker.type, point.coords.x, point.coords.y, point.coords.z, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, client.dropmarker.scale[1], client.dropmarker.scale[2], client.dropmarker.scale[3],
-        ---@diagnostic disable-next-line: param-type-mismatch
-        client.dropmarker.colour[1], client.dropmarker.colour[2], client.dropmarker.colour[3], 222, false, false, 0, true, false, false, false)
-    end
+		---@diagnostic disable-next-line: param-type-mismatch
+		DrawMarker(2, point.coords.x, point.coords.y, point.coords.z, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.3, 0.2, 0.15, 150, 30, 30, 222, false, false, 0, true, false, false, false)
+	end
 end
 
 ---@param point CPoint
@@ -1339,10 +1333,7 @@ RegisterNetEvent('ox_inventory:setPlayerInventory', function(currentDrops, inven
 
 	PlayerData.loaded = true
 
-	if not client.disablesetupnotification then
-		lib.notify({ description = locale('inventory_setup') })
-	end
-
+	lib.notify({ description = locale('inventory_setup') })
 	Shops.refreshShops()
 	Inventory.Stashes()
 	Inventory.Evidence()
@@ -1352,12 +1343,6 @@ RegisterNetEvent('ox_inventory:setPlayerInventory', function(currentDrops, inven
 	TriggerEvent('ox_inventory:updateInventory', PlayerData.inventory)
 
 	client.interval = SetInterval(function()
-        local canSteal = canOpenTarget(playerPed)
-
-        if canSteal ~= plyState.canSteal then
-            plyState:set('canSteal', canSteal, true)
-        end
-
 		if invOpen == false then
 			playerCoords = GetEntityCoords(playerPed)
 
@@ -1379,14 +1364,14 @@ RegisterNetEvent('ox_inventory:setPlayerInventory', function(currentDrops, inven
 						local ped = GetPlayerPed(id)
 						local pedCoords = GetEntityCoords(ped)
 
-						if not id or #(playerCoords - pedCoords) > maxDistance or (not client.hasGroup(shared.police) and not Player(currentInventory.id).state.canSteal) then
+						if not id or #(playerCoords - pedCoords) > maxDistance or not (client.hasGroup(shared.police) or canOpenTarget(ped)) then
 							client.closeInventory()
 							lib.notify({ id = 'inventory_lost_access', type = 'error', description = locale('inventory_lost_access') })
 						else
 							TaskTurnPedToFaceCoord(playerPed, pedCoords.x, pedCoords.y, pedCoords.z, 50)
 						end
 
-					elseif currentInventory.coords and (#(playerCoords - currentInventory.coords) > maxDistance or canSteal) then
+					elseif currentInventory.coords and (#(playerCoords - currentInventory.coords) > maxDistance or canOpenTarget(playerPed)) then
 						client.closeInventory()
 						lib.notify({ id = 'inventory_lost_access', type = 'error', description = locale('inventory_lost_access') })
 					end
@@ -1587,7 +1572,7 @@ RegisterNetEvent('ox_inventory:viewInventory', function(left, right)
 	SetNuiFocusKeepInput(true)
 	closeTrunk()
 
-	if client.screenblur then Utils.blurIn() end
+	if client.screenblur then TriggerScreenblurFadeIn(0) end
 
 	currentInventory = right or defaultInventory
 	currentInventory.ignoreSecurityChecks = true
@@ -1777,7 +1762,6 @@ lib.callback.register('ox_inventory:startCrafting', function(id, recipe)
 	return lib.progressCircle({
 		label = locale('crafting_item', recipe.metadata?.label or Items[recipe.name].label),
 		duration = recipe.duration or 3000,
-		position = 'bottom',
 		canCancel = true,
 		disable = {
 			move = true,

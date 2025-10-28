@@ -155,7 +155,7 @@ return {
 			{ ped = 'S_M_M_AmmuCountry', scenario = 'WORLD_HUMAN_AA_SMOKE', loc = vec3(-331.2310, 6085.4409, 30.4548), heading = 224.5500},
 			{ ped = 'S_M_Y_AmmuCity_01', scenario = 'WORLD_HUMAN_CLIPBOARD', loc = vec3(250.1848, -51.6053, 68.9411), heading = 30.6571},
 			{ ped = 'S_M_Y_AmmuCity_01', scenario = 'WORLD_HUMAN_AA_SMOKE', loc = vec3(23.9163, -1107.6727, 28.7970), heading = 70.7882},
-			{ ped = 'S_M_M_AmmuCountry', scenario = 'WORLD_HUMAN_DRINKING', loc = vec3(2568.2502, 292.5665, 107.7348), heading = 359.9678},
+			{ ped = 'S_M_M_AmmuCountry', scenario = 'WORLD_HUMAN_DRINKING', loc = vec3(2568.2502, 292.5665, 106.7348), heading = 359.9678},
 			{ ped = 'S_M_M_AmmuCountry', scenario = 'WORLD_HUMAN_AA_SMOKE', loc = vec3(-1118.7694, 2700.0195, 17.5541), heading = 220.6967},
 			{ ped = 'S_M_Y_AmmuCity_01', scenario = 'WORLD_HUMAN_CLIPBOARD', loc = vec3(844.5178, -1035.2571, 27.1948), heading = 1.6867},
 		}

@@ -4,8 +4,8 @@ lua54 'yes'
 game 'gta5'
 name 'ox_inventory'
 author 'Overextended'
-version '2.44.8'
-repository 'https://github.com/communityox/ox_inventory'
+version '2.43.4'
+repository 'https://github.com/overextended/ox_inventory'
 description 'Slot-based inventory with item metadata support'
 
 dependencies {
@@ -40,6 +40,7 @@ files {
     'web/build/assets/*.js',
     'web/build/assets/*.css',
     'web/images/*.png',
+    'web/images/c-icons/*.png',
     'modules/**/shared.lua',
     'modules/**/client.lua',
     'modules/bridge/**/client.lua',

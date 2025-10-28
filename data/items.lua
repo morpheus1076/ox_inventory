@@ -35,60 +35,6 @@ return {
 		close = true,
 		description = nil
 	},
-
-	['tops'] = {
-		label = 'Oberbekleidung',
-		weight = 500,
-		stack = false,
-		close = true,
-		description = 'Oberbekleidung Variation',
-		client = {
-			anim = { dict = 'missheistdockssetup1clipboard@idle_a', clip = 'idle_a', flag = 49 },
-			prop = { model = 'prop_rolled_sock_02', pos = vec3(-0.14, -0.14, -0.08), rot = vec3(-50.0, -50.0, 0.0) },
-			disable = { move = true, car = true, combat = true },
-			usetime = 3500,
-		}
-	},
-
-	['shoes'] = {
-		label = 'Schuhe',
-		weight = 500,
-		stack = false,
-		close = true,
-		description = 'Schuhe Variation',
-		client = {
-			anim = { dict = 'missheistdockssetup1clipboard@idle_a', clip = 'idle_a', flag = 49 },
-			prop = { model = 'prop_rolled_sock_02', pos = vec3(-0.14, -0.14, -0.08), rot = vec3(-50.0, -50.0, 0.0) },
-			disable = { move = true, car = true, combat = true },
-			usetime = 3500,
-		}
-	},
-	['pants'] = {
-		label = 'Hose',
-		weight = 1200,
-		stack = false,
-		close = true,
-		description = 'Hose Variation',
-		client = {
-			anim = { dict = 'missheistdockssetup1clipboard@idle_a', clip = 'idle_a', flag = 49 },
-			prop = { model = 'prop_rolled_sock_02', pos = vec3(-0.14, -0.14, -0.08), rot = vec3(-50.0, -50.0, 0.0) },
-			disable = { move = true, car = true, combat = true },
-			usetime = 4500,
-		}
-	},
-	['mask'] = {
-		label = 'Maske',
-		weight = 70,
-		stack = false,
-		close = true,
-		description = 'Maske Variation',
-		client = {
-			anim = { dict = 'missheistdockssetup1clipboard@idle_a', clip = 'idle_a', flag = 49 },
-			prop = { model = 'prop_rolled_sock_02', pos = vec3(-0.14, -0.14, -0.08), rot = vec3(-50.0, -50.0, 0.0) },
-			disable = { move = true, car = true, combat = true },
-			usetime = 2500,
-		}
-	},
 	['mdt'] = {
 		label = 'MDT',
 		weight = 250,
@@ -97,6 +43,78 @@ return {
 		}
 	},
 
+
+--- Kleidung ---
+	['tops'] = {
+		label = 'Oberbekleidung',
+		weight = 500,
+		stack = false,
+	},
+	['shoes'] = {
+		label = 'Schuhe',
+		weight = 500,
+		stack = false,
+	},
+	['pants'] = {
+		label = 'Hose',
+		weight = 450,
+		stack = false,
+	},
+	['mask'] = {
+		label = 'Maske',
+		weight = 70,
+		stack = false,
+	},
+	['hat'] = {
+		label = 'Kopfbedeckung',
+		weight = 100,
+		stack = false,
+	},
+	['earrings'] = {
+		label = 'Ohrringe',
+		weight = 100,
+		stack = false,
+	},
+	['glasses'] = {
+		label = 'Brille',
+		weight = 100,
+		stack = false,
+	},
+	['chain'] = {
+		label = 'Kette',
+		weight = 100,
+		stack = false,
+	},
+	['undershirt'] = {
+		label = 'Undershirt',
+		weight = 100,
+		stack = false,
+	},
+	['jacket'] = {
+		label = 'Jacke',
+		weight = 100,
+		stack = false,
+	},
+	['bodyarmor'] = {
+		label = 'Weste',
+		weight = 100,
+		stack = false,
+	},
+	['bracelet'] = {
+		label = 'Armbänder',
+		weight = 100,
+		stack = false,
+	},
+	['watch'] = {
+		label = 'Uhr',
+		weight = 100,
+		stack = false,
+	},
+	['gloves'] = {
+		label = 'Body/Handschuh',
+		weight = 100,
+		stack = false,
+	},
 
 -- Container Items ---
 	['paperbag'] = {
@@ -180,7 +198,7 @@ return {
 		},
 		client = {
 			anim = { dict = "missheistdockssetup1clipboard@idle_a", clip = "idle_a", flag = 49 },
-			prop = { model = `prop_rolled_sock_02`, pos = vec3(-0.14, -0.14, -0.08), rot = vec3(-50.0, -50.0, 0.0) },
+			prop = { model = 'prop_rolled_sock_02', pos = vec3(-0.14, -0.14, -0.08), rot = vec3(-50.0, -50.0, 0.0) },
 			disable = { move = true, car = true, combat = true },
 			usetime = 2500
 		},

@@ -6,7 +6,7 @@ require 'modules.shops.server'
 require 'modules.pefcl.server'
 
 if GetConvar('inventory:versioncheck', 'true') == 'true' then
-	lib.versionCheck('communityox/ox_inventory')
+	lib.versionCheck('overextended/ox_inventory')
 end
 
 local TriggerEventHooks = require 'modules.hooks.server'
@@ -66,25 +66,6 @@ function server.setPlayerInventory(player, data)
 end
 exports('setPlayerInventory', server.setPlayerInventory)
 AddEventHandler('ox_inventory:setPlayerInventory', server.setPlayerInventory)
-
-local registeredDumpsters = {}
-
----@param coords vector3
----@return string?
-local function getDumpsterFromCoords(coords)
-	local found
-
-	for i = 1, #registeredDumpsters do
-		local distance = #(coords - registeredDumpsters[i])
-
-		if distance < 0.1 then
-			found = i
-			break
-		end
-	end
-
-	return found
-end
 
 ---@param playerPed number
 ---@param stash OxInventory
@@ -177,14 +158,14 @@ local function openInventory(source, invType, data, ignoreSecurityChecks)
 				data.type = invType
 				right = Inventory(data)
 
-				if right and data.netid ~= right.netid then
-					local invEntity = NetworkGetEntityFromNetworkId(right.netid)
+                if right and data.netid ~= right.netid then
+                    local invEntity = NetworkGetEntityFromNetworkId(right.netid)
 
-					if not (invEntity > 0 and DoesEntityExist(invEntity)) or (plate and not string.match(GetVehicleNumberPlateText(invEntity) or '', plate)) then
-						Inventory.Remove(right)
-						right = Inventory(data)
-					end
-				end
+                    if DoesEntityExist(invEntity) or plate and not string.match(GetVehicleNumberPlateText(invEntity), plate) then return end
+
+                    Inventory.Remove(right)
+                    right = Inventory(data)
+                end
 			elseif invType == 'drop' then
 				right = Inventory(data.id)
 			else
@@ -195,25 +176,16 @@ local function openInventory(source, invType, data, ignoreSecurityChecks)
 				right = Inventory(('evidence-%s'):format(data))
 			end
 		elseif invType == 'dumpster' then
-			if shared.networkdumpsters then
-				local dumpsterId = getDumpsterFromCoords(data)
-				right = dumpsterId and Inventory(('dumpster-%s'):format(dumpsterId))
+			---@cast data string
+			right = Inventory(data)
 
-				if not right then
-					dumpsterId = #registeredDumpsters + 1
-					right = Inventory.Create(('dumpster-%s'):format(dumpsterId), locale('dumpster'), invType, 15, 0, 100000, false)
-					registeredDumpsters[dumpsterId] = data
-				end
-			else
-				---@cast data string
-				right = Inventory(data)
+			if not right then
+				local netid = tonumber(data:sub(9))
 
-				if not right then
-					local netid = tonumber(data:sub(9))
-
-					if netid and NetworkGetEntityFromNetworkId(netid) > 0 then
-						right = Inventory.Create(data, locale('dumpster'), invType, 15, 0, 100000, false)
-					end
+				-- dumpsters do not work with entity lockdown. need to rewrite, but having to do
+				-- distance checks to some ~7000 dumpsters and freeze the entities isn't ideal
+				if netid and NetworkGetEntityFromNetworkId(netid) > 0 then
+					right = Inventory.Create(data, locale('dumpster'), invType, 15, 0, 100000, false)
 				end
 			end
 		elseif invType == 'container' then
@@ -230,13 +202,6 @@ local function openInventory(source, invType, data, ignoreSecurityChecks)
 		else right = Inventory(data) end
 
 		if not right then return end
-
-        -- Security check to make sure the requested inventory type is the same as the found inventory
-        -- Only case where a missmatch is tolerated is for temporary stashes
-        if right.type ~= invType and not (right.type == 'temp' and invType == 'stash') then
-            DropPlayer(source, 'sussy')
-            return
-        end
 
 		if not ignoreSecurityChecks and right.groups and not server.hasGroup(left, right.groups) then return end
 
@@ -294,21 +259,7 @@ end
 ---@param invType string
 ---@param data string|number|table
 lib.callback.register('ox_inventory:openInventory', function(source, invType, data)
-    if invType == 'player' and source ~= data then
-        local serverId = type(data) == 'table' and data.id or data
-
-        if source == serverId or type(serverId) ~= 'number' then return end
-
-        local left = Inventory(source)
-        if not left then return end
-
-        local isPolice = server.hasGroup(left, shared.police)
-        local isTargetStealable = Player(serverId).state.canSteal
-
-        if not isPolice and not isTargetStealable then return end
-    end
-
-    return openInventory(source, invType, data)
+	return openInventory(source, invType, data)
 end)
 
 ---@param netId number
@@ -388,9 +339,9 @@ end)
 ---@param metadata { [string]: any }?
 ---@return table | boolean | nil
 lib.callback.register('ox_inventory:useItem', function(source, itemName, slot, metadata, noAnim)
-	local inventory = Inventory(source)
+	local inventory = Inventory(source) --[[@as OxInventory]]
 
-	if inventory and inventory.player then
+	if inventory.player then
 		local item = Items(itemName)
 		local data = item and (slot and inventory.items[slot] or Inventory.GetSlotWithItem(inventory, item.name, metadata, true))
 
@@ -576,8 +527,7 @@ lib.addCommand({'additem', 'giveitem'}, {
 
 	if item then
 		local inventory = Inventory(args.target) --[[@as OxInventory]]
-		local count = args.count and math.max(args.count, 1) or 1
-
+		local count = args.count or 1
 		local success, response = Inventory.AddItem(inventory, item.name, count, args.type and { type = tonumber(args.type) or args.type })
 
 		if not success then
@@ -597,27 +547,25 @@ lib.addCommand('removeitem', {
 	params = {
 		{ name = 'target', type = 'playerId', help = 'The player to remove the item from' },
 		{ name = 'item', type = 'string', help = 'The name of the item' },
-		{ name = 'count', type = 'number', help = 'The amount of the item to take', optional = true },
+		{ name = 'count', type = 'number', help = 'The amount of the item to take' },
 		{ name = 'type', help = 'Only remove items with a matching metadata "type"', optional = true },
 	},
 	restricted = 'group.admin',
 }, function(source, args)
 	local item = Items(args.item)
 
-	if item then
+	if item and args.count > 0 then
 		local inventory = Inventory(args.target) --[[@as OxInventory]]
-		local count = args.count and math.max(args.count, 1) or 1
-
-		local success, response = Inventory.RemoveItem(inventory, item.name, count, args.type and { type = tonumber(args.type) or args.type }, nil, true)
+		local success, response = Inventory.RemoveItem(inventory, item.name, args.count, args.type and { type = tonumber(args.type) or args.type }, nil, true)
 
 		if not success then
-			return Citizen.Trace(('Failed to remove %sx %s from player %s (%s)'):format(count, item.name, args.target, response))
+			return Citizen.Trace(('Failed to remove %sx %s from player %s (%s)'):format(args.count, item.name, args.target, response))
 		end
 
 		source = Inventory(source) or {label = 'console', owner = 'console'}
 
 		if server.loglevel > 0 then
-			lib.logger(source.owner, 'admin', ('"%s" removed %sx %s from "%s"'):format(source.label, count, item.name, inventory.label))
+			lib.logger(source.owner, 'admin', ('"%s" removed %sx %s from "%s"'):format(source.label, args.count, item.name, inventory.label))
 		end
 	end
 end)
@@ -636,18 +584,16 @@ lib.addCommand('setitem', {
 
 	if item then
 		local inventory = Inventory(args.target) --[[@as OxInventory]]
-		local count = args.count and math.max(args.count, 0) or 0
-
-		local success, response = Inventory.SetItem(inventory, item.name, count or 0, args.type and { type = tonumber(args.type) or args.type })
+		local success, response = Inventory.SetItem(inventory, item.name, args.count or 0, args.type and { type = tonumber(args.type) or args.type })
 
 		if not success then
-			return Citizen.Trace(('Failed to set %s count to %sx for player %s (%s)'):format(item.name, count, args.target, response))
+			return Citizen.Trace(('Failed to set %s count to %sx for player %s (%s)'):format(item.name, args.count, args.target, response))
 		end
 
 		source = Inventory(source) or {label = 'console', owner = 'console'}
 
 		if server.loglevel > 0 then
-			lib.logger(source.owner, 'admin', ('"%s" set "%s" %s count to %sx'):format(source.label, inventory.label, item.name, count))
+			lib.logger(source.owner, 'admin', ('"%s" set "%s" %s count to %sx'):format(source.label, inventory.label, item.name, args.count))
 		end
 	end
 end)
@@ -661,8 +607,6 @@ lib.addCommand('clearevidence', {
 	if not server.isPlayerBoss then return end
 
 	local inventory = Inventory(source)
-	if not inventory then return end
-
 	local group, grade = server.hasGroup(inventory, shared.police)
 	local hasPermission = group and server.isPlayerBoss(source, group, grade)
 
